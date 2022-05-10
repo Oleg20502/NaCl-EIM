@@ -1,0 +1,37 @@
+# NaCl test problem for embedded atom method (EIM) potential
+
+units		metal
+atom_style      atomic
+
+boundary	p p p
+
+lattice         diamond 5.0
+read_data       /home/common/studtscm02/NaCl-EIM/input/data.eim
+
+pair_style      eim
+pair_coeff      * * Na Cl /home/common/studtscm02/NaCl-EIM/input/ffield.eim Na Cl 
+
+neighbor	0.3 bin
+neigh_modify	delay 0
+
+timestep        0.001
+thermo_style    custom step temp density
+thermo          50
+
+compute         myRDF all rdf 500
+fix             rdf all ave/time 100 100 20000 c_myRDF[*] file /home/common/studtscm02/NaCl-EIM/rdf/tmp_YYYYTEMP.rdf mode vector
+
+velocity        all create YYYYTEMP.0 43454 dist gaussian mom yes
+fix             int all npt temp YYYYTEMP YYYYTEMP 0.1 iso 1.0 1.0 0.5
+
+#dump		id all atom 100 dump.eim
+
+#dump		2 all image 25 image.*.jpg element element &
+#		axes yes 0.8 0.02 view 60 -30
+#dump_modify	2 pad 3 element Na Cl
+
+#dump		3 all movie 25 movie.mpg element element &
+#		axes yes 0.8 0.02 view 60 -30
+#dump_modify	3 pad 3 element Na Cl
+
+run             20000
