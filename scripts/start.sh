@@ -21,7 +21,8 @@ mkdir -p png/
 
 curl -s -X POST https://api.telegram.org/bot${TOKEN}/sendMessage -d chat_id=${CHATID} -d text="Started"
 
-for temp in 600 700 800 900 1000 1100 1200 1300 1400 1500 1600
+##for temp in 600 700 800 900 1000 1100 1200 1300 1400 1500 1600
+for temp in 800 1000 1200 1400 1600 1800 2000 2200 2400 2600
 do
 	sed "s/YYYYTEMP/$temp/g" input/in.eim_raw > in.eim_for_run
 	srun --exclusive -N 1 -p RT --ntasks-per-node=8 ~/bin/lmp_mpi -in in.eim_for_run > log/log.lammps_$temp
