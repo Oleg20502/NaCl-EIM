@@ -15,16 +15,19 @@ neighbor	0.3 bin
 neigh_modify	delay 0
 
 timestep        0.001
-thermo_style    custom step temp density
-thermo          50
 
+compute         1 all msd
 compute         myRDF all rdf 500
-fix             rdf all ave/time 100 100 20000 c_myRDF[*] file /home/common/studtscm02/NaCl-EIM/rdf/tmp_YYYYTEMP.rdf mode vector
+fix             rdf all ave/time 100 500 100000 c_myRDF[*] file /home/common/studtscm02/NaCl-EIM/rdf/tmp_YYYYTEMP.rdf mode vector
+
+thermo_style    custom step time temp press density c_1[4]
+thermo          100
 
 velocity        all create YYYYTEMP.0 43454 dist gaussian mom yes
-fix             int all npt temp YYYYTEMP YYYYTEMP 0.1 iso 1.0 1.0 0.5
+fix             int all npt temp YYYYTEMP YYYYTEMP 0.1 iso 0.0 0.0 0.5
 
-#dump		id all atom 100 dump.eim
+dump		id all atom 100 /home/common/studtscm02/NaCl-EIM/dump/dump_YYYYTEMP.eim
+dump_modify     id sort id
 
 #dump		2 all image 25 image.*.jpg element element &
 #		axes yes 0.8 0.02 view 60 -30
@@ -34,4 +37,4 @@ fix             int all npt temp YYYYTEMP YYYYTEMP 0.1 iso 1.0 1.0 0.5
 #		axes yes 0.8 0.02 view 60 -30
 #dump_modify	3 pad 3 element Na Cl
 
-run             20000
+run             100000
